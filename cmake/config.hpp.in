@@ -1,0 +1,34 @@
+#ifndef CONFIG_HEADER
+#define CONFIG_HEADER
+
+// turn on warnings 
+#cmakedefine USE_WARNINGS 
+
+// where lua scripts are located (absolute path) 
+#cmakedefine LUA_DIR "@LUA_DIR@/"
+// where the tests are located 
+#cmakedefine TEST_DIR "@TEST_DIR@/"
+// where the exec files are located 
+#cmakedefine EXEC_DIR "@EXEC_DIR@/"
+
+// number of GQ points 
+#cmakedefine INTEGRATION_ORDER @INTEGRATION_ORDER@ 
+
+// integration type (legendre, lobatto) 
+#cmakedefine INTEGRATION_TYPE @INTEGRATION_TYPE@ 
+
+// use lua 
+#cmakedefine USE_LUA
+// use OpenMP
+#cmakedefine USE_OMP
+// use SuperLU
+#cmakedefine USE_SUPERLU
+// use Eigen 
+#cmakedefine USE_EIGEN 
+// use the libunwind backtracer 
+#cmakedefine USE_UNWIND 
+
+// turn of CH_TIMER commands 
+#cmakedefine CH_NTIMER
+
+#endif

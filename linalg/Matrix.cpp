@@ -1,0 +1,88 @@
+#include "Matrix.hpp"
+
+using namespace std; 
+
+#define FLAT(i,j) i + j*Width()
+
+extern "C" void dgesv_(int* n, int* nrhs, double* a, int* lda, int* ipiv, 
+	double* b, int* ldb, int* info ); 
+
+namespace trt 
+{
+
+Matrix::Matrix(int m, int n) {
+	CHECK(m > 0, "m = " << m); CHECK(n > 0 || n==-1, "n = " << n); 
+	_m = m; 
+	_n = n; 
+	if (_n == -1) _n = _m; 
+
+	_data.Resize(_m * _n); 
+	for (int i=0; i<_m*_n; i++) {
+		_data[i] = 0.; 
+	}
+}
+
+Matrix::Matrix(const Matrix& m) {
+	_m = m.Height(); 
+	_n = m.Width(); 
+	_data.Resize(_m*_n); 
+	for (int i=0; i<_m*_n; i++) {
+		_data[i] = m.Data()[i]; 
+	}
+}
+
+Matrix& Matrix::operator=(const Matrix& m) {
+	if (_m == 0 && _n == 0) {
+		_m = m.Height(); 
+		_n = m.Width(); 
+		_data.Resize(_m*_n); 
+	}
+
+	for (int i=0; i<_m*_n; i++) {
+		_data[i] = m.Data()[i]; 
+	}
+
+	return *this; 
+}
+
+double& Matrix::operator()(int i, int j) {
+	CHECK(i<Height(), "index out of range. i = " << i << ", height = " << Height()); 
+	CHECK(j<Width(), "index out of range. j = " << j << ", width = " << Width()); 
+
+	return _data[FLAT(i,j)]; 
+}
+
+double Matrix::operator()(int i, int j) const {
+	CHECK(i<Height(), "index out of range. i = " << i << ", height = " << Height()); 
+	CHECK(j<Width(), "index out of range. j = " << j << ", width = " << Width()); 
+
+	return _data[FLAT(i,j)]; 
+}
+
+void Matrix::Solve(const Vector& b, Vector& x) const {
+	for (int i=0; i<x.Size(); i++) {
+		x[i] = b[i]; 
+	}
+
+	Matrix lu((*this)); 
+
+	int N = x.Size(); 
+	int one = 1; 
+	int ipiv[x.Size()]; 
+	int info; 
+	dgesv_(&N, &one, lu.Data(), &N, &ipiv[0], &x[0], &N, &info); 
+
+	if (info > 0) ERROR("LAPACK issue"); 
+}
+
+ostream& Matrix::Print(ostream& out) const {
+	for (int i=0; i<Height(); i++) {
+		for (int j=0; j<Width(); j++) {
+			out << (*this)(i,j) << " "; 
+		}
+		out << endl; 
+	}
+	return out; 
+}
+
+} // end namespace trt 
