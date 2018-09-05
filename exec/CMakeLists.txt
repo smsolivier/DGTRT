@@ -1,6 +1,6 @@
 list(APPEND EXEC
-
-	)
+  sweep.cpp
+)
 
 # add_executable(poisson poisson.cpp)
 # target_link_libraries(poisson fem) 

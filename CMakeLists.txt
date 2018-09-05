@@ -65,13 +65,14 @@ set(CMAKE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 # to find configure file 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${PROJECT_SOURCE_DIR}) 
 include_directories(utils utils/eigen)
-include_directories(general linalg)  
+include_directories(general linalg fem)  
 
 # store all head and sources 
 set(SOURCES "") 
 set(HEADERS "") 
 add_subdirectory(general)
 add_subdirectory(linalg)
+add_subdirectory(fem) 
 
 option(USE_WARNINGS "Enable warning messages" ON) 
 option(ENABLE_CHECKS "enable checks" ON)
@@ -91,7 +92,7 @@ configure_file(${CMAKE_PATH}/config.hpp.in config.hpp @ONLY)
 enable_testing() 
 
 add_library(trt ${SOURCES} ${HEADERS}) 
-set(LIBS trt ${LUA_LIBRARIES} ${LIBUNWIND_LIBRARIES} ${LAPACK_LIBRARIES})  
+set(LIBS trt ${LUA_LIBRARIES} ${LIBUNWIND_LIBRARIES} ${LAPACK_LIBRARIES} dl)  
 
 add_subdirectory(test)
 add_subdirectory(exec)

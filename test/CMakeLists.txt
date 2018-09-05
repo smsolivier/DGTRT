@@ -1,6 +1,7 @@
 list(APPEND TESTS
 	matrix.cpp
 	quadrature.cpp
+	poly1d.cpp
 	)
 
 if (CMAKE_TESTING_ENABLED)
