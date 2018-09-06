@@ -3,6 +3,8 @@
 #include "TVector.hpp"
 #include "Matrix.hpp"
 #include "Vector.hpp"
+#include "Quadrature.hpp"
+#include "Coefficient.hpp" 
 
 namespace trt 
 {
@@ -11,8 +13,20 @@ namespace trt
 class Sweeper {
 public:
 	/// constructor 
-	Sweeper(const FESpace* space); 
-
+	Sweeper(FESpace* space, Quadrature& quad) : _quad(quad), _space(space) { }
+	/// perform a sweep for all angles 
+	void Solve(Coefficient* sig_s, Coefficient* sig_t, Coefficient* q, 
+		const Vector& phi, TVector& psi) const; 
+	/// sweep from left to right (mu > 0) 
+	void SweepLR(double mu, Coefficient* sig_s, 
+		Coefficient* sig_t, Coefficient* q, const Vector& phi, Vector& psi_n) const; 
+	void SweepRL(double mu, Coefficient* sig_s, 
+		Coefficient* sig_t, Coefficient* q, const Vector& phi, Vector& psi_n) const; 
+private:
+	/// store FE space for psi 
+	FESpace* _space; 
+	/// store quadrature object for angular integration 
+	Quadrature _quad; 
 }; 
 
 } // end namespace trt 

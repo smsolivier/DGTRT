@@ -43,6 +43,10 @@ public:
 	void operator+=(const Matrix& mat); 
 	/// add two matrices together 
 	void Add(const Matrix& a, Matrix& sum) const; 
+	/// do \f$ b = alpha this x + beta * b \f$ 
+	void Mult(double alpha, const Vector& x, double beta, Vector& b) const; 
+	/// just matrix vector product 
+	void Mult(const Vector& x, Vector& b) const {Mult(1., x, 1., b); }
 
 	/// print to output 
 	std::ostream& Print(std::ostream& out=std::cout) const; 	

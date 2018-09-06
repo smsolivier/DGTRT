@@ -13,6 +13,12 @@ void Vector::operator/=(double val) {
 	}
 }
 
+void Vector::operator*=(double val) {
+	for (int i=0; i<Size(); i++) {
+		(*this)[i] *= val; 
+	}
+}
+
 double Vector::operator*(const Vector& v) const {
 	CHECK(v.Size()==Size(), "size mismatch. v = " << v.Size()
 		<< ", this = " << Size());
@@ -39,6 +45,14 @@ void Vector::GetSubVector(const Array<int>& vdofs, Vector& subv) const {
 	subv.Resize(vdofs.Size()); 
 	for (int i=0; i<vdofs.Size(); i++) {
 		subv[i] = (*this)[vdofs[i]]; 
+	}
+}
+
+void Vector::operator+=(const Vector& v) {
+	CHECK(v.Size() == Size(), "sizes must match"); 
+
+	for (int i=0; i<Size(); i++) {
+		(*this)[i] += v[i]; 
 	}
 }
 

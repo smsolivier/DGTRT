@@ -3,6 +3,7 @@
 #include "Element.hpp"
 #include "Matrix.hpp"
 #include "Error.hpp"
+#include "Coefficient.hpp"
 
 namespace trt 
 {
@@ -21,11 +22,15 @@ public:
 /// integrate a mass matrix \f$ \int B_i B_j dx \f$ 
 class MassIntegrator : public BilinearIntegrator {
 public:
-	/// constructor 
-	MassIntegrator() { }
+	/// default constructor 
+	MassIntegrator() {_c = NULL; }
+	/// constructor with coefficient 
+	MassIntegrator(Coefficient* c) {_c = c; }
 	/// assemble local mass matrix 
 	void Assemble(Element& el, Matrix& elmat); 
 private:
+	/// coefficient 
+	Coefficient* _c; 
 	/// store shape evaluations 
 	Vector _shape; 
 	/// store outer product of shape functions 
@@ -36,10 +41,14 @@ private:
 class WeakConvectionIntegrator : public BilinearIntegrator {
 public:
 	/// constructor 
-	WeakConvectionIntegrator() { }
+	WeakConvectionIntegrator() {_c = NULL; }
+	/// constructor with coefficient 
+	WeakConvectionIntegrator(Coefficient* c) {_c = c; }
 	/// assemble local matrix 
 	void Assemble(Element& el, Matrix& elmat); 
 private:
+	/// store coefficient 
+	Coefficient* _c; 
 	/// store shape evals 
 	Vector _shape; 
 	/// store grad shape evals 

@@ -7,6 +7,9 @@ using namespace std;
 extern "C" void dgesv_(int* n, int* nrhs, double* a, int* lda, int* ipiv, 
 	double* b, int* ldb, int* info ); 
 
+extern "C" void dgemv_(char* TRANS, int* M, int* N, double* ALPHA, double* A, 
+	int* LDA, double* X, int* INCX, double* beta, double* Y, int* INCY); 
+
 namespace trt 
 {
 
@@ -97,12 +100,31 @@ void Matrix::operator+=(const Matrix& mat) {
 }
 
 void Matrix::Add(const Matrix& a, Matrix& sum) const {
-	CHECK((a.Height()==Height())&& (Height()==sum.Height()), "height mismatch"); 
+	CHECK((a.Height()==Height()) && (Height()==sum.Height()), "height mismatch. a = " 
+		<< a.Height() << ", this = " << Height() << ", sum = " << sum.Height()); 
 	CHECK((a.Width()==Width()) && (Width()==sum.Width()), "width mismatch"); 
 
 	for (int i=0; i<_data.Size(); i++) {
 		sum.Data()[i] = _data[i] + a.Data()[i]; 
 	}
+}
+
+void Matrix::Mult(double alpha, const Vector& x, double beta, Vector& b) const {
+	CHECK(x.Size() == Width(), "size mismatch"); 
+	CHECK(b.Size() == Height(), "size mismatch"); 
+
+	char trans = 'N'; 
+	int M = Height(); 
+	int N = Width(); 
+	int LDA = M; 
+	int INCX = 1; 
+	int INCY = 1; 
+
+	Matrix copy(*this); 
+	Vector xc(x); 
+
+	dgemv_(&trans, &M, &N, &alpha, copy.Data(), &LDA, &xc[0], &INCX, &beta, &b[0], &INCY); 
+
 }
 
 ostream& Matrix::Print(ostream& out) const {

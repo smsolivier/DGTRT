@@ -13,3 +13,5 @@
 #include "L2Segment.hpp"
 #include "Node.hpp"
 #include "Coefficient.hpp"
+#include "Sweeper.hpp"
+#include "TransportOperator.hpp"

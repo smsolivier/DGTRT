@@ -15,6 +15,10 @@ public:
 	double& operator()(int angle, int i); 
 	/// const indexing 
 	double operator()(int angle, int i) const; 
+	/// get an angle 
+	void GetAngle(int angle, Vector& psi_n) const; 
+	/// return the FESpace 
+	const FESpace* GetSpace() const {return _space; }
 private:
 	/// Finite element space this is build on 
 	const FESpace* _space; 

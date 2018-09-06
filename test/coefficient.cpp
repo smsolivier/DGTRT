@@ -17,5 +17,5 @@ int main() {
 	Node right(10, -1, INTERIOR); 
 	L2Segment l2(left, right, 1); 
 	ElTrans& trans = l2.GetTrans(); 
-	// TEST(EQUAL(f->Eval(trans, .5), 25.), "eval with transformation"); 
+	TEST(EQUAL(f->Eval(trans, .5), 25.), "eval with transformation"); 
 }

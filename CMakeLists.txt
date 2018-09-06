@@ -101,7 +101,7 @@ add_subdirectory(exec)
 # build doxygen 
 find_package(Doxygen)
 if (DOXYGEN_FOUND) 
-add_custom_target(doc ALL
+add_custom_target(doc
 	COMMAND Doxygen::doxygen Doxyfile &> /dev/null
 	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/docs
 	)

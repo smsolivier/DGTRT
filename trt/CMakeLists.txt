@@ -1,11 +1,15 @@
 list(APPEND SRCS
-	TVector.cpp
-	)
+  TVector.cpp
+  TransportOperator.cpp
+  Sweeper.cpp
+  )
 
 list(APPEND HDRS
-	TVector.hpp
-	Opacity.hpp
-	)
+  TVector.hpp
+  Opacity.hpp
+  TransportOperator.hpp
+  Sweeper.hpp
+  )
 
 convert_filenames_to_full_paths(SRCS)
 convert_filenames_to_full_paths(HDRS)

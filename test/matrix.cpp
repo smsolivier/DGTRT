@@ -23,6 +23,10 @@ int main() {
 
 	m.Solve(v, x); 
 	TEST(EQUAL(x[0], 1.2), "lapack solve"); 
+	Vector mult(3); 
+	m.Mult(1., x, 1., mult); 
+	TEST(EQUAL(mult[0], 1.) && EQUAL(mult[1], 1.) && EQUAL(mult[2], 1.), 
+		"matrix vector product"); 
 
 	Matrix a(3, 3); 
 	for (int i=0; i<9; i++) {

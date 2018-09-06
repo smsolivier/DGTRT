@@ -3,39 +3,34 @@
 using namespace trt; 
 using namespace std; 
 
+// #define LR
+
 double exact(double x) {
+#ifdef LR 
 	return exp(-x); 
+#else 
+	return exp(-(1-x)); 
+#endif
 }
 
 double Error(int Ne, int p) {
 	double xb = 1; 
 
-	L2Space l2(Ne, xb, p); 
-	Vector psi(l2.GetVSize()); 
-	WeakConvectionIntegrator wci; 
-	MassIntegrator mi; 
-	for (int e=0; e<Ne; e++) {
-		Matrix mass, convection; 
-		Element& el = l2.GetElement(e); 
-		Vector rhs(el.NumNodes()); 
-		mi.Assemble(el, mass); 
-		wci.Assemble(el, convection); 
-		Matrix A(el.NumNodes()); 
-		mass.Add(convection, A); 
-		if (e>0) {
-			Element& pel = l2.GetElement(e-1); 
-			rhs[0] += psi[pel.GetNode(pel.NumNodes()-1).GlobalID()]; 
-		} else {
-			rhs[0] += 1.; 
-		}
-		A(el.NumNodes()-1, el.NumNodes()-1) += 1; 
+	L2Space l2(Ne, 1, p); 
+	Quadrature sn_quad(8); 
+	Sweeper sweeper(&l2, sn_quad); 
 
-		Vector psi_local(el.NumNodes()); 
-		A.Solve(rhs, psi_local); 
-		for (int i=0; i<psi_local.Size(); i++) {
-			psi[el.GetNode(i).GlobalID()] = psi_local[i]; 
-		}
-	}
+	ConstantCoefficient sig_s(0); 
+	ConstantCoefficient sig_t(1); 
+
+	Vector phi(l2.GetVSize()); 
+	Vector psi(l2.GetVSize()); 
+
+#ifdef LR
+	sweeper.SweepLR(1, &sig_s, &sig_t, &sig_s, phi, psi); 
+#else 
+	sweeper.SweepRL(-1, &sig_s, &sig_t, &sig_s, phi, psi); 
+#endif
 
 	// compute error 
 	double E = 0; 

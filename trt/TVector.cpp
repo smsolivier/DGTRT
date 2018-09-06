@@ -19,4 +19,11 @@ double TVector::operator()(int angle, int i) const {
 	return (*this)[FLAT(angle, i)]; 
 }
 
+void TVector::GetAngle(int angle, Vector& psi_n) const {
+	psi_n.Resize(_space->GetVSize()); 
+	for (int i=0; i<_space->GetVSize(); i++) {
+		psi_n[i] = (*this)(angle, i); 
+	} 
+}
+
 } // end namespace trt 
