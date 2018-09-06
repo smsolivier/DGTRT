@@ -2,6 +2,9 @@ list(APPEND TESTS
 	matrix.cpp
 	quadrature.cpp
 	poly1d.cpp
+	integrators.cpp
+	sweep.cpp
+	coefficient.cpp
 	)
 
 if (CMAKE_TESTING_ENABLED)

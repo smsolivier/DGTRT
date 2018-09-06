@@ -3,30 +3,43 @@
 namespace trt 
 {
 
-Vector::Vector(int N, double val) {
-	Resize(N, val); 
+Vector::Vector(int N, double val) : Array<double>(N, val) {
+
 }
 
-Vector::Vector(const Vector& x) {
-	_data.Resize(x.Size()); 
-	for (int i=0; i<x.Size(); i++) {
-		_data[i] = x[i]; 
-	}
-}
-
-void Vector::Resize(int N, double val) {
-	_data.Resize(N); 	
-	for (int i=0; i<N; i++) {
-		_data[i] = val; 
-	}	
-}
-
-std::ostream& Vector::Print(std::ostream& out) const {
+void Vector::operator/=(double val) {
 	for (int i=0; i<Size(); i++) {
-		out << _data[i] << " "; 
+		(*this)[i] /= val; 
 	}
-	out << std::endl; 
-	return out; 
+}
+
+double Vector::operator*(const Vector& v) const {
+	CHECK(v.Size()==Size(), "size mismatch. v = " << v.Size()
+		<< ", this = " << Size());
+	double sum = 0; 
+	for (int i=0; i<Size(); i++) {
+		sum += v[i] * (*this)[i]; 
+	} 
+	return sum; 
+}
+
+void Vector::OuterProduct(const Vector& v, Matrix& mat) const {
+	CHECK(v.Size()>0, "size incorrect. size = " << v.Size()); 
+	CHECK(Size()>0, "size incorrect. size = " << Size()); 
+	mat.Resize(Size(), v.Size()); 
+
+	for (int i=0; i<Size(); i++) {
+		for (int j=0; j<v.Size(); j++) {
+			mat(i,j) = (*this)[i] * v[j]; 
+		}
+	}
+}
+
+void Vector::GetSubVector(const Array<int>& vdofs, Vector& subv) const {
+	subv.Resize(vdofs.Size()); 
+	for (int i=0; i<vdofs.Size(); i++) {
+		subv[i] = (*this)[vdofs[i]]; 
+	}
 }
 
 } // end namespace trt 

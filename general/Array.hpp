@@ -104,6 +104,12 @@ public:
 		}
 		out << std::endl; 
 	}
+	/// direct access to the data 
+	double* Data() {return &_vector[0]; }
+	/// const direct access to the data 
+	const double* Data() const {return &_vector[0]; }
+	/// access to the last element 
+	double& Last() {return _vector[Size()-1]; }
 private:
 	/// vector that stores all the data 
 	std::vector<T> _vector; 

@@ -6,15 +6,21 @@
 
 namespace trt {
 
+class Vector; 
+
 /// store a matrix 
 class Matrix {
 public:
+	/// default constructor 
+	Matrix() { }
 	/// constructor. defaults to square 
 	Matrix(int m, int n=-1); 
 	/// copy constructor 
 	Matrix(const Matrix& m); 
 	/// copy assignment 
 	Matrix& operator=(const Matrix& m); 
+	/// set the size 
+	void Resize(int m, int n=-1); 
 
 	/// return the number of rows 
 	int Height() const {return _m; }
@@ -31,6 +37,12 @@ public:
 
 	/// solve the system \f$ Ax = b \f$ using lapack's dgesv (LU factor and solve) 
 	void Solve(const Vector& b, Vector& x) const; 
+	/// scale all elements by val 
+	void operator*=(double val); 
+	/// add a matrix to this 
+	void operator+=(const Matrix& mat); 
+	/// add two matrices together 
+	void Add(const Matrix& a, Matrix& sum) const; 
 
 	/// print to output 
 	std::ostream& Print(std::ostream& out=std::cout) const; 	

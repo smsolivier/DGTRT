@@ -23,4 +23,21 @@ int main() {
 
 	m.Solve(v, x); 
 	TEST(EQUAL(x[0], 1.2), "lapack solve"); 
+
+	Matrix a(3, 3); 
+	for (int i=0; i<9; i++) {
+		a.Data()[i] = i; 
+	}
+	Matrix sum(3,3); 
+	a.Add(m, sum); 
+	TEST(EQUAL(sum(0,0), 1.) &&
+		EQUAL(sum(0,1), 2.) && 
+		EQUAL(sum(0,2), 6.) && 
+		EQUAL(sum(1,0), 1.) && 
+		EQUAL(sum(1,1), 9.) && 
+		EQUAL(sum(1,2), 7.) && 
+		EQUAL(sum(2,0), 2.) && 
+		EQUAL(sum(2,1), 5.2) && 
+		EQUAL(sum(2,2), 11), 
+		"matrix sum"); 
 }

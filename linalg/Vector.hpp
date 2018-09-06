@@ -1,39 +1,33 @@
 #pragma once 
 
 #include "Array.hpp"
+#include "Matrix.hpp"
 #include <fstream> 
 
 namespace trt 
 {
 
+class Matrix; 
+
 /// class for storing a vector of doubles 
-class Vector {
+class Vector : public Array<double> {
 public:
 	/// constructor 
 	/** \param N size of vector
 		\param val initial value for all elements 
 	*/ 
 	Vector(int N, double val=0); 
-	/// copy constructor 
-	Vector(const Vector& x); 
-	/// set the size 
-	void Resize(int size, double val=0); 
-	/// return the size of the vector 
-	int Size() const {return _data.Size(); }
-	/// access the data 
-	double& operator[](int index) {return _data[index]; }
-	/// const access to the data 
-	double operator[](int index) const {return _data[index]; }
-	/// const direct access to the data 
-	const double* Data() const {return &_data[0]; }
-	/// direct access to the data 
-	double* Data() {return &_data[0]; }
+	/// default constructor 
+	Vector() { }
+	/// divide all entries by val 
+	void operator/=(double val); 
+	/// dot product 
+	double operator*(const Vector& v) const; 
+	/// outer product 
+	void OuterProduct(const Vector& v, Matrix& mat) const; 
+	/// return the subvector corresponding to the ordering in vdofs 
+	void GetSubVector(const Array<int>& vdofs, Vector& subv) const; 
 
-	/// print to stream 
-	std::ostream& Print(std::ostream& out=std::cout) const; 
-private:
-	/// store the data 
-	Array<double> _data; 
 }; 
 
 } // end namespace trt 

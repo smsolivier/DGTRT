@@ -1,5 +1,4 @@
 list(APPEND EXEC
-  sweep.cpp
 )
 
 # add_executable(poisson poisson.cpp)

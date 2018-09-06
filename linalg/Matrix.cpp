@@ -11,15 +11,7 @@ namespace trt
 {
 
 Matrix::Matrix(int m, int n) {
-	CHECK(m > 0, "m = " << m); CHECK(n > 0 || n==-1, "n = " << n); 
-	_m = m; 
-	_n = n; 
-	if (_n == -1) _n = _m; 
-
-	_data.Resize(_m * _n); 
-	for (int i=0; i<_m*_n; i++) {
-		_data[i] = 0.; 
-	}
+	Resize(m, n); 
 }
 
 Matrix::Matrix(const Matrix& m) {
@@ -43,6 +35,18 @@ Matrix& Matrix::operator=(const Matrix& m) {
 	}
 
 	return *this; 
+}
+
+void Matrix::Resize(int m, int n) {
+	CHECK(m > 0, "m = " << m); CHECK(n > 0 || n==-1, "n = " << n); 
+	_m = m; 
+	_n = n; 
+	if (_n == -1) _n = _m; 
+
+	_data.Resize(_m * _n); 
+	for (int i=0; i<_m*_n; i++) {
+		_data[i] = 0.; 
+	}	
 }
 
 double& Matrix::operator()(int i, int j) {
@@ -73,6 +77,32 @@ void Matrix::Solve(const Vector& b, Vector& x) const {
 	dgesv_(&N, &one, lu.Data(), &N, &ipiv[0], &x[0], &N, &info); 
 
 	if (info > 0) ERROR("LAPACK issue"); 
+}
+
+void Matrix::operator*=(double val) {
+	for (int i=0; i<_data.Size(); i++) {
+		_data[i] *= val; 
+	}
+}
+
+void Matrix::operator+=(const Matrix& mat) {
+	CHECK(mat.Height()==Height(), "height mismatch. mat = " 
+		<< mat.Height() << ", this = " << Height()); 
+	CHECK(mat.Width()==Width(), "width mismatch. mat = " 
+		<< mat.Width() << ", this = " << Width()); 	
+
+	for (int i=0; i<_data.Size(); i++) {
+		_data[i] += mat.Data()[i]; 
+	}
+}
+
+void Matrix::Add(const Matrix& a, Matrix& sum) const {
+	CHECK((a.Height()==Height())&& (Height()==sum.Height()), "height mismatch"); 
+	CHECK((a.Width()==Width()) && (Width()==sum.Width()), "width mismatch"); 
+
+	for (int i=0; i<_data.Size(); i++) {
+		sum.Data()[i] = _data[i] + a.Data()[i]; 
+	}
 }
 
 ostream& Matrix::Print(ostream& out) const {
