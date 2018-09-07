@@ -7,6 +7,7 @@ list(APPEND SRCS
   FESpace.cpp
   BilinearIntegrator.cpp
   LinearIntegrator.cpp
+  GridFunction.cpp
   )
 
 list(APPEND HDRS
@@ -19,6 +20,7 @@ list(APPEND HDRS
   BilinearIntegrator.hpp
   LinearIntegrator.hpp
   Coefficient.hpp
+  GridFunction.hpp
   )
 
 convert_filenames_to_full_paths(SRCS)

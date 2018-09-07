@@ -46,6 +46,8 @@ public:
 	double Interpolate(double x, const Vector& u) const; 
 	/// get the ids of all nodes in the element 
 	void GetVDofs(Array<int>& vdofs) const; 
+	/// return the polynomial order of this element 
+	int GetOrder() const {return _order; }
 protected:
 	/// left end point node 
 	Node& _left; 

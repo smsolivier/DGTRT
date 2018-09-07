@@ -8,7 +8,7 @@
 */
 #endif
 
-#include "General.hpp"
+#include "config.hpp"
 
 #ifndef CH_NTIMER
 

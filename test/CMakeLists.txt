@@ -6,7 +6,7 @@ list(APPEND TESTS
 	sweep.cpp
 	coefficient.cpp
 	array.cpp
-	transport.cpp
+	si.cpp
 	)
 
 if (CMAKE_TESTING_ENABLED)

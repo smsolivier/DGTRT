@@ -29,8 +29,8 @@ double Error(int Ne, int p) {
 
 	Sweeper sweeper(&l2, sn_quad, &inflow); 
 
-	Vector phi(l2.GetVSize()); 
-	Vector psi(l2.GetVSize()); 
+	GridFunction phi(&l2); 
+	GridFunction psi(&l2); 
 
 #ifdef LR
 	sweeper.SweepLR(1, &sig_s, &sig_t, &sig_s, phi, psi); 
@@ -46,14 +46,14 @@ double Error(int Ne, int p) {
 	out.close();
 
 	FunctionCoefficient ex(exact); 
-	return l2.L2Error(psi, &ex); 
+	return psi.L2Error(&ex); 
 }
 
 int main(int argc, char* argv[]) {
 	int Ne = 8; 
 	if (argc > 1) Ne = atoi(argv[1]); 
 
-	for (int p=1; p<7; p++) {
+	for (int p=1; p<6; p++) {
 		if (p == 4) Ne /= 4;
 		double E1 = Error(Ne, p); 
 		double E2 = Error(Ne*2, p); 

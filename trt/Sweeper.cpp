@@ -60,7 +60,7 @@ void Sweeper::SweepLR(double mu, Coefficient* sig_s, Coefficient* sig_t,
 			Element& pel = _space->GetElement(e-1); 
 			rhs[0] += mu * psi_n[pel.GetNode(pel.NumNodes()-1).GlobalID()]; 
 		} else {
-			rhs[0] += mu * _inflow->Eval(el.GetNode(0).X());  
+			rhs[0] += mu * _inflow->Eval(el.GetTrans(), 0);  
 		}
 		A(el.NumNodes()-1, el.NumNodes()-1) += mu; 
 
@@ -118,7 +118,7 @@ void Sweeper::SweepRL(double mu, Coefficient* sig_s, Coefficient* sig_t,
 			Element& pel = _space->GetElement(e+1); 
 			rhs[rhs.Size()-1] += fabs(mu) * psi_n[pel.GetNode(0).GlobalID()]; 
 		} else {
-			rhs[rhs.Size()-1] += fabs(mu) * _inflow->Eval(el.GetNode(el.NumNodes()-1).X()); 
+			rhs[rhs.Size()-1] += fabs(mu) * _inflow->Eval(el.GetTrans(), 1); 
 		}
 		A(0,0) += fabs(mu); 
 

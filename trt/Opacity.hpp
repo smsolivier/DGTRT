@@ -2,20 +2,19 @@
 
 #include "Error.hpp"
 #include "ElTrans.hpp"
+#include "Coefficient.hpp"
 
 namespace trt 
 {
 
 /// abstract representation of space and temperature dependent opacity 
-class Opacity {
+class Opacity : public Coefficient {
 public:
-	/// evaluate 
-	/** \param xphys point in physical space 
-		\param temperature 
-	*/ 
-	virtual double Eval(double xphys, double T) const {
-		ERROR("base class is not callable. use pointer to derived class"); 
-	}
+	/// set the temperature Vector for evaluating temperature dependence 
+	void SetTemperature(const Vector& T) {_T = T; } 
+protected:
+	/// store the tempearture Vector 
+	Vector _T; 
 }; 
 
 /// constant opacity 
@@ -24,7 +23,7 @@ public:
 	/// constructor 
 	ConstantOpacity(double c) {_c = c; }
 	/// evaluate 
-	double Eval(double xphys, double T) const {return _c; }
+	double Eval(double xphys) const {return _c; }
 private:
 	/// constant value 
 	double _c; 
@@ -36,7 +35,7 @@ public:
 	/// constructor 
 	FunctionOpacity(double (*f)(double x, double T)) {_f = f; }
 	/// evaluate 
-	double Eval(double xphys, double T) const {return _f(xphys, T); }
+	double Eval(ElTrans& trans, double xref) const; 
 private:
 	/// store function of space, temperature 
 	double (*_f)(double x, double T); 

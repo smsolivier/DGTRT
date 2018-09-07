@@ -1,5 +1,6 @@
 list(APPEND SRCS
   TVector.cpp
+  Opacity.cpp
   TransportOperator.cpp
   Sweeper.cpp
   )

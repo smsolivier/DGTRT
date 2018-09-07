@@ -1,10 +1,10 @@
 #pragma once 
-#include "General.hpp"
+#include "Error.hpp"
 #include "Vector.hpp"
 
 struct lua_State; 
 
-namespace fem 
+namespace trt
 {
 
 /// read in and access a Lua script 
@@ -25,9 +25,11 @@ public:
 	void Parse(int argc, char* argv[], std::string def="none"); 
 
 	/// return a vector valued function named field_name 
-	void VectorFunction(const char* field_name, const Point& x, Vector& v) const; 
+	void VectorFunction(const char* field_name, double x, Vector& v) const; 
 	/// return a scalar valued function name field_name 
-	double ScalarFunction(const char* field_name, const Point& x) const; 
+	double ScalarFunction(const char* field_name, double x) const; 
+	/// return a scalar valued function named field_name that takes two arguments 
+	double ScalarFunction(const char* field_name, double x, double mu) const; 
 	/// return a double named field_name from lua script 
 	double Double(const char* field_name) const; 
 	/// return a double with default value if not found 
@@ -44,16 +46,12 @@ public:
 	bool Bool(const char* field_name) const; 
 
 	// common definitions 
-	/// get the mesh file name. Lua keyword = mesh_file 
-	std::string MeshFile() const {return String("mesh_file"); }
-	/// return the number of mesh refinements. Lua keyword = nref 
-	int MeshRefinements() const {return Int("nref", 0); }
 	/// evaluate source_function from lua script. Lua keyword = source_function 
-	double SourceFunction(const Point& x) {
+	double SourceFunction(double x) {
 		return ScalarFunction("source_function", x); 
 	}
 	/// evaluate initial conditions. Lua keyword = initial_function 
-	double InitialConditions(const Point& x) {
+	double InitialConditions(double x) {
 		return ScalarFunction("initial_function", x); 
 	}
 	/// return the output name from lua script. Lua keyword = output_file 
@@ -72,4 +70,4 @@ private:
 	lua_State* _state; 
 }; 
 
-} // end namespace fem 
+} // end namespace trt 

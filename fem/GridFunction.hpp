@@ -2,6 +2,7 @@
 
 #include "FESpace.hpp"
 #include "Vector.hpp"
+#include "Coefficient.hpp"
 
 namespace trt 
 {
@@ -10,15 +11,16 @@ namespace trt
 class GridFunction : public Vector {
 public:
 	/// constructor 
-	GridFunction(const FESpace* space) : Vector(space->GetVSize()) {
+	GridFunction(FESpace* space) : Vector(space->GetVSize()) {
 		_space = space; 
 	}
 	/// return the FESpace associated with the solution vector 
-	const FESpace* GetSpace() const {return _space; }
-
+	FESpace* GetSpace() const {return _space; }
+	/// return the L2 error 
+	double L2Error(Coefficient* exact); 
 private:
 	/// space associated with the solution vector 
-	const FESpace* _space; 
+	FESpace* _space; 
 }; 
 
 } // end namespace trt 

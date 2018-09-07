@@ -1,9 +1,10 @@
 #include "Lua.hpp"
 #include "lua.hpp"
+#include "config.hpp"
 
 #define LUAERROR {ERROR("field name " << field_name << " not found in Lua script"); }
 
-namespace fem 
+namespace trt
 {
 
 LuaReader::LuaReader(std::string filename) {
@@ -38,7 +39,8 @@ void LuaReader::SetLuaFile(std::string filename) {
 	} 
 	// not found :( 
 	else {
-		ERROR("lua file not found in exec, test, lua, or current directory"); 
+		ERROR("lua file " << filename 
+			<< " not found in exec, test, lua, or current directory"); 
 	}
 }
 
@@ -88,7 +90,7 @@ double LuaReader::Double(const char* field_name) const {
 	lua_getglobal(_state, field_name); 
 	if (lua_isnil(_state, -1)) LUAERROR; 
 
-	const double result = static_cast<double>(lua_tonumber(_state, -1)); 
+	double result = static_cast<double>(lua_tonumber(_state, -1)); 
 	lua_pop(_state, 1); 
 
 	return result; 
@@ -98,7 +100,7 @@ double LuaReader::Double(const char* field_name, double def) const {
 	lua_getglobal(_state, field_name); 
 	if (lua_isnil(_state, -1)) return def; 
 
-	const double result = static_cast<double>(lua_tonumber(_state, -1)); 
+	double result = static_cast<double>(lua_tonumber(_state, -1)); 
 	lua_pop(_state, 1); 
 
 	return result; 
@@ -126,21 +128,32 @@ std::string LuaReader::String(const char* field_name) const {
 	return ret; 
 }
 
-double LuaReader::ScalarFunction(const char* field_name, const Point& x) const {
+double LuaReader::ScalarFunction(const char* field_name, double x) const {
 	double result; 
 
 	lua_getglobal(_state, field_name); 
 	if (lua_isnil(_state, -1)) LUAERROR; 
 
-	lua_pushnumber(_state, x[0]); 
-	lua_pushnumber(_state, x[1]); 
-#if DIM==3 
-	lua_pushnumber(_state, x[2]); 
-#else 
-	lua_pushnumber(_state, 0.); 
-#endif
+	lua_pushnumber(_state, x); 
 
-	lua_call(_state, 3, 1); 
+	lua_call(_state, 1, 1); 
+	result = static_cast<double>(lua_tonumber(_state, -1)); 
+	lua_pop(_state, 1); 
+	lua_settop(_state, 0); 
+
+	return result; 
+}
+
+double LuaReader::ScalarFunction(const char* field_name, double x, double mu) const {
+	double result; 
+
+	lua_getglobal(_state, field_name); 
+	if (lua_isnil(_state, -1)) LUAERROR; 
+
+	lua_pushnumber(_state, x); 
+	lua_pushnumber(_state, mu); 
+
+	lua_call(_state, 2, 1); 
 	result = static_cast<double>(lua_tonumber(_state, -1)); 
 	lua_pop(_state, 1); 
 	lua_settop(_state, 0); 
@@ -149,23 +162,17 @@ double LuaReader::ScalarFunction(const char* field_name, const Point& x) const {
 }
 
 void LuaReader::VectorFunction(const char* field_name, 
-	const Point& x, Vector& v) const {
+	double x, Vector& v) const {
 
 	lua_getglobal(_state, field_name); 
 	if (lua_isnil(_state, -1)) LUAERROR; 
 
-	lua_pushnumber(_state, x[0]); 
-	lua_pushnumber(_state, x[1]); 
-#if DIM==3 
-	lua_pushnumber(_state, x[2]); 
-#else 
-	lua_pushnumber(_state, 0.); 
-#endif
+	lua_pushnumber(_state, x); 
 
 	lua_call(_state, 3, 3); 
 	v[0] = lua_tonumber(_state, -3); 
 	v[1] = lua_tonumber(_state, -2); 
-	if (v.GetSize() == 3) 
+	if (v.Size() == 3) 
 		v[2] = lua_tonumber(_state, -1); 
 	lua_pop(_state, 3); 
 	lua_settop(_state, 0); 

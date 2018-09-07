@@ -3,7 +3,7 @@
 
 using namespace std; 
 
-namespace fem 
+namespace trt
 {
 
 WallTimer::WallTimer() {
@@ -22,4 +22,4 @@ WallTimer::~WallTimer() {
 	}
 }
 
-} // end namespace fem 
+} // end namespace trt 

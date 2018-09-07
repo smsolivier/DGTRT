@@ -27,7 +27,7 @@ double Error(int Ne, int p) {
 	TransportOperator transport(&l2, Nangles, &Sig_s, &Sig_t, &q, &inflow); 
 	TVector psi(&l2, Nangles); 
 	transport.SourceIteration(psi, 100, 1e-6); 
-	Vector phi(l2.GetVSize()); 
+	GridFunction phi(&l2); 
 	transport.ComputeScalarFlux(psi, phi); 
 
 	ofstream out("phi.txt"); 
@@ -40,7 +40,7 @@ double Error(int Ne, int p) {
 	out.close(); 
 
 	FunctionCoefficient exact(Exact); 
-	return l2.L2Error(phi, &exact); 
+	return phi.L2Error(&exact); 
 }
 
 int main() {

@@ -2,7 +2,7 @@
 
 #include <chrono> 
 
-namespace fem 
+namespace trt 
 {
 
 /// singleton class for wall timer using std::chrono
@@ -26,4 +26,4 @@ private:
 	bool _init; 
 }; 
 
-} // end namespace fem 
+} // end namespace trt

@@ -3,7 +3,6 @@ list (APPEND SRCS
 	 CH_Timer.cpp
 	 Lua.cpp
 	 Writer.cpp
-	 VisitWriter.cpp
 	 )
 
 list (APPEND HDRS
@@ -12,7 +11,6 @@ list (APPEND HDRS
 	 ClockTicks.hpp
 	 Lua.hpp
 	 Writer.hpp
-	 VisitWriter.H
 	 )
 
 convert_filenames_to_full_paths(SRCS) 
