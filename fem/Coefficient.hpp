@@ -2,17 +2,16 @@
 
 #include "Error.hpp"
 #include "ElTrans.hpp"
+#include "GridFunction.hpp"
 
 namespace trt 
 {
 
+class GridFunction; 
+
 /// abstract class for evaluating things 
 class Coefficient {
 public:
-	/// interface for evaluating derived classes in physical space 
-	// virtual double Eval(double xphys) const {
-		// ERROR("abstract class is not callable. use a pointer to a derived class"); 
-	// }
 	/// interface for evaluating with a transformation
 	virtual double Eval(ElTrans& trans, double xref) const {
 		ERROR("abstract class is not callable"); 
@@ -60,6 +59,18 @@ public:
 private:
 	/// store the 2D function 
 	double (*_f)(double, double); 
+}; 
+
+/// evaluate a GridFunction as a coefficient 
+class GridFunctionCoefficient : public Coefficient {
+public:
+	/// constructor 
+	GridFunctionCoefficient(GridFunction& gf) { _gf = &gf; }
+	/// evaluate the grid function coefficient 
+	double Eval(ElTrans& trans, double xref) const; 
+private:
+	/// store the grid function
+	GridFunction* _gf; 
 }; 
 
 } // end namespace trt 

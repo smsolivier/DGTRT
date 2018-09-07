@@ -19,4 +19,14 @@ int main() {
 
 	Coefficient* f = func; 
 	TEST(EQUAL(f->Eval(trans, .5), 25.), "eval with transformation"); 
+
+	L2Space space(10, 1, 1); 
+	GridFunction phi(&space); 
+	for (int i=0; i<phi.Size(); i++) {
+		phi[i] = i; 
+	}
+
+	GridFunctionCoefficient gfc(phi); 
+	TEST(EQUAL(gfc.Eval(space.GetElement(1).GetTrans(), 0), 2.), 
+		"grid function coefficient"); 
 }

@@ -1,7 +1,6 @@
 #pragma once 
 
 #include "Element.hpp"
-#include "Coefficient.hpp"
 
 namespace trt 
 {

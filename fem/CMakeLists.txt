@@ -7,6 +7,7 @@ list(APPEND SRCS
   FESpace.cpp
   BilinearIntegrator.cpp
   LinearIntegrator.cpp
+  Coefficient.cpp
   GridFunction.cpp
   )
 

@@ -7,6 +7,8 @@
 namespace trt 
 {
 
+class Coefficient; 
+
 /// represent a solution vector on an FESpace 
 class GridFunction : public Vector {
 public:
