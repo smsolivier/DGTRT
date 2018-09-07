@@ -3,7 +3,7 @@
 using namespace trt; 
 using namespace std; 
 
-// #define LR
+#define LR
 
 double exact(double x) {
 #ifdef LR 
@@ -13,15 +13,21 @@ double exact(double x) {
 #endif
 }
 
+double Inflow(double x, double mu) {
+	return 1.; 
+}
+
 double Error(int Ne, int p) {
 	double xb = 1; 
 
 	L2Space l2(Ne, 1, p); 
 	Quadrature sn_quad(8); 
-	Sweeper sweeper(&l2, sn_quad); 
 
 	ConstantCoefficient sig_s(0); 
 	ConstantCoefficient sig_t(1); 
+	FunctionStateCoefficient inflow(Inflow); 
+
+	Sweeper sweeper(&l2, sn_quad, &inflow); 
 
 	Vector phi(l2.GetVSize()); 
 	Vector psi(l2.GetVSize()); 
@@ -32,20 +38,6 @@ double Error(int Ne, int p) {
 	sweeper.SweepRL(-1, &sig_s, &sig_t, &sig_s, phi, psi); 
 #endif
 
-	// compute error 
-	double E = 0; 
-	Quadrature quad(INTEGRATION_ORDER); 
-	Vector shape; 
-	for (int e=0; e<Ne; e++) {
-		Element& el = l2.GetElement(e); 
-		ElTrans& trans = el.GetTrans(); 
-		for (int n=0; n<quad.NumPoints(); n++) {
-			double x = quad.Point(n); 
-			E += pow(el.Interpolate(x, psi) 
-				- exact(trans.Transform(x)), 2) * trans.Jacobian(x); 
-		}
-	}
-
 	ofstream out("psi.txt"); 
 	for (int i=0; i<Ne; i++) {
 		Element& el = l2.GetElement(i); 
@@ -53,7 +45,8 @@ double Error(int Ne, int p) {
 	}
 	out.close();
 
-	return sqrt(E); 
+	FunctionCoefficient ex(exact); 
+	return l2.L2Error(psi, &ex); 
 }
 
 int main(int argc, char* argv[]) {

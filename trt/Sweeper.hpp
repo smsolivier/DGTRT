@@ -13,7 +13,8 @@ namespace trt
 class Sweeper {
 public:
 	/// constructor 
-	Sweeper(FESpace* space, Quadrature& quad) : _quad(quad), _space(space) { }
+	Sweeper(FESpace* space, Quadrature& quad, Coefficient* inflow) 
+		: _quad(quad), _space(space) {_inflow = inflow; }
 	/// perform a sweep for all angles 
 	void Solve(Coefficient* sig_s, Coefficient* sig_t, Coefficient* q, 
 		const Vector& phi, TVector& psi) const; 
@@ -27,6 +28,8 @@ private:
 	FESpace* _space; 
 	/// store quadrature object for angular integration 
 	Quadrature _quad; 
+	/// store the inflow function 
+	Coefficient* _inflow; 
 }; 
 
 } // end namespace trt 

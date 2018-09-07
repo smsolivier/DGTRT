@@ -1,11 +1,28 @@
 #include "FESpace.hpp"
 #include "L2Segment.hpp"
+#include "Quadrature.hpp"
 
 namespace trt 
 {
 
 FESpace::FESpace(int Ne, double xb, int order) {
 
+}
+
+double FESpace::L2Error(Vector& u, Coefficient* exact) {
+	double E = 0; 
+	Quadrature quad(INTEGRATION_ORDER); 
+	Vector shape; 
+	for (int e=0; e<GetNumElements(); e++) {
+		Element& el = GetElement(e); 
+		ElTrans& trans = el.GetTrans(); 
+		for (int n=0; n<quad.NumPoints(); n++) {
+			double x = quad.Point(n); 
+			E += pow(el.Interpolate(x, u) - exact->Eval(trans.Transform(x)), 2)
+				* trans.Jacobian(x) * quad.Weight(n); 
+		}
+	}
+	return sqrt(E); 
 }
 
 L2Space::L2Space(int Ne, double xb, int order) : FESpace(Ne, xb, order) {

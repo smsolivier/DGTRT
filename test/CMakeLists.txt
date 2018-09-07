@@ -5,6 +5,8 @@ list(APPEND TESTS
 	integrators.cpp
 	sweep.cpp
 	coefficient.cpp
+	array.cpp
+	transport.cpp
 	)
 
 if (CMAKE_TESTING_ENABLED)

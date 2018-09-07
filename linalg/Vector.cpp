@@ -7,6 +7,12 @@ Vector::Vector(int N, double val) : Array<double>(N, val) {
 
 }
 
+void Vector::operator=(double val) {
+	for (int i=0; i<Size(); i++) {
+		(*this)[i] = val; 
+	}
+}
+
 void Vector::operator/=(double val) {
 	for (int i=0; i<Size(); i++) {
 		(*this)[i] /= val; 
@@ -14,6 +20,7 @@ void Vector::operator/=(double val) {
 }
 
 void Vector::operator*=(double val) {
+	WARNIF(Size()==0, "A vector has zero length"); 
 	for (int i=0; i<Size(); i++) {
 		(*this)[i] *= val; 
 	}
@@ -49,10 +56,22 @@ void Vector::GetSubVector(const Array<int>& vdofs, Vector& subv) const {
 }
 
 void Vector::operator+=(const Vector& v) {
-	CHECK(v.Size() == Size(), "sizes must match"); 
+	WARNIF(v.Size()==0 || Size()==0, "A vector has zero length. " 
+		<< "v = " << v.Size() << ", this = " << Size()); 
+	CHECK(v.Size() == Size(), "sizes must match. v = " << v.Size()
+		<< ", this = " << Size()); 
 
 	for (int i=0; i<Size(); i++) {
 		(*this)[i] += v[i]; 
+	}
+}
+
+void Vector::Subtract(const Vector& v, Vector& diff) const {
+	CHECK(v.Size() == Size(), "size mismatch"); 
+	diff.Resize(Size()); 
+
+	for (int i=0; i<Size(); i++) {
+		diff[i] = (*this)[i] - v[i]; 
 	}
 }
 

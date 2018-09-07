@@ -58,6 +58,13 @@ public:
 			(*this)[i] = val; 
 		}
 	}
+	/// copy assignment 
+	void operator=(const Array<T>& a) {
+		Resize(a.Size()); 
+		for (int i=0; i<a.Size(); i++) {
+			(*this)[i] = a[i]; 
+		}
+	}
 	/// add to end of Array 
 	void Append(T val) {_vector.push_back(val); }
 	/// add an array to the back of this 

@@ -1,27 +1,31 @@
 #pragma once 
 
 #include "FESpace.hpp"
-#include "Array.hpp"
+#include "Vector.hpp"
 
 namespace trt 
 {
 
 /// store psi. strides in space then angle 
-class TVector : public Array<double> {
+class TVector : public Vector {
 public:
 	/// constructor 
-	TVector(const FESpace* space, int Nangles); 
+	TVector(FESpace* space, int Nangles); 
 	/// 2D indexing 
 	double& operator()(int angle, int i); 
 	/// const indexing 
 	double operator()(int angle, int i) const; 
+	/// set all values 
+	void operator=(double val) {Vector::operator=(val); }
 	/// get an angle 
 	void GetAngle(int angle, Vector& psi_n) const; 
+	/// set an angle 
+	void SetAngle(int angle, const Vector& psi_n); 
 	/// return the FESpace 
-	const FESpace* GetSpace() const {return _space; }
+	FESpace* GetSpace() const {return _space; }
 private:
 	/// Finite element space this is build on 
-	const FESpace* _space; 
+	FESpace* _space; 
 	/// number of angles 
 	int _Nangles; 
 }; 

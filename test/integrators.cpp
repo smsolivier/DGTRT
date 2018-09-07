@@ -23,5 +23,10 @@ int main() {
 		EQUAL(elmat(0,1), .5) && 
 		EQUAL(elmat(1,0), -.5) && 
 		EQUAL(elmat(1,1), -.5), 
-		"weak convection integrator")
+		"weak convection integrator"); 
+
+	DomainIntegrator di; 
+	Vector elvec; 
+	di.Assemble(l2, elvec); 
+	elvec.Print(); 
 }

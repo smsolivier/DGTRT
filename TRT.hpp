@@ -7,6 +7,7 @@
 #include "Vector.hpp"
 #include "Basis.hpp"
 #include "BilinearIntegrator.hpp"
+#include "LinearIntegrator.hpp"
 #include "Element.hpp"
 #include "ElTrans.hpp"
 #include "FESpace.hpp"
@@ -15,3 +16,4 @@
 #include "Coefficient.hpp"
 #include "Sweeper.hpp"
 #include "TransportOperator.hpp"
+#include "TVector.hpp"

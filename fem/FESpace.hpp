@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "Element.hpp"
+#include "Coefficient.hpp"
 
 namespace trt 
 {
@@ -21,6 +22,8 @@ public:
 	Element& GetElement(int e) {return *_els[e]; }
 	/// access to node i 
 	const Node& GetNode(int i) const {return *_nodes[i]; }
+	/// compute L2 error 
+	double L2Error(Vector& u, Coefficient* exact); 
 protected:
 	/// store the elements in the FESpace 
 	Array<Element*> _els; 

@@ -1,5 +1,6 @@
 #include "Sweeper.hpp"
 #include "BilinearIntegrator.hpp"
+#include "LinearIntegrator.hpp"
 
 namespace trt 
 {
@@ -13,6 +14,7 @@ void Sweeper::Solve(Coefficient* sig_s, Coefficient* sig_t, Coefficient* q,
 		psi.GetAngle(n, psi_n); 
 		if (mu > 0) SweepLR(mu, sig_s, sig_t, q, phi, psi_n); 
 		else SweepRL(mu, sig_s, sig_t, q, phi, psi_n); 
+		psi.SetAngle(n, psi_n); 
 	}
 }
 
@@ -25,6 +27,9 @@ void Sweeper::SweepLR(double mu, Coefficient* sig_s, Coefficient* sig_t,
 	MassIntegrator col_int(sig_t); 
 	MassIntegrator scat_int(sig_s); 
 	WeakConvectionIntegrator stream_int(&c_mu); 
+	q->SetState(mu); 
+	DomainIntegrator di(q); 
+	_inflow->SetState(mu); 
 	for (int e=0; e<_space->GetNumElements(); e++) {
 		Matrix stream, coll, scatt; 
 		Element& el = _space->GetElement(e); 
@@ -42,14 +47,20 @@ void Sweeper::SweepLR(double mu, Coefficient* sig_s, Coefficient* sig_t,
 		el.GetVDofs(vdofs);
 		Vector phi_local; 
 		phi.GetSubVector(vdofs, phi_local); 
+		phi_local /= 2.; 
 		scatt.Mult(phi_local, rhs); 
+
+		// assemble source integrator 
+		Vector source; 
+		di.Assemble(el, source); 
+		rhs += source; 
 
 		// apply upwinding 
 		if (e > 0) {
 			Element& pel = _space->GetElement(e-1); 
 			rhs[0] += mu * psi_n[pel.GetNode(pel.NumNodes()-1).GlobalID()]; 
 		} else {
-			rhs[0] += mu; 
+			rhs[0] += mu * _inflow->Eval(el.GetNode(0).X());  
 		}
 		A(el.NumNodes()-1, el.NumNodes()-1) += mu; 
 
@@ -73,7 +84,9 @@ void Sweeper::SweepRL(double mu, Coefficient* sig_s, Coefficient* sig_t,
 	MassIntegrator col_int(sig_t); 
 	MassIntegrator scat_int(sig_s); 
 	WeakConvectionIntegrator stream_int(&c_mu); 
-
+	q->SetState(mu); 
+	DomainIntegrator di(q); 
+	_inflow->SetState(mu); 
 	for (int e=_space->GetNumElements()-1; e>=0; e--) {
 		Element& el = _space->GetElement(e); 
 		Matrix stream, coll, scatt; 
@@ -92,14 +105,20 @@ void Sweeper::SweepRL(double mu, Coefficient* sig_s, Coefficient* sig_t,
 		el.GetVDofs(vdofs);
 		Vector phi_local; 
 		phi.GetSubVector(vdofs, phi_local); 
+		phi_local /= 2.; 
 		scatt.Mult(phi_local, rhs);
+
+		// assemble source integrator 
+		Vector source; 
+		di.Assemble(el, source); 
+		rhs += source; 
 
 		// apply upwinding 
 		if (e < _space->GetNumElements()-1) {
 			Element& pel = _space->GetElement(e+1); 
 			rhs[rhs.Size()-1] += fabs(mu) * psi_n[pel.GetNode(0).GlobalID()]; 
 		} else {
-			rhs[rhs.Size()-1] += fabs(mu) * 1.; 
+			rhs[rhs.Size()-1] += fabs(mu) * _inflow->Eval(el.GetNode(el.NumNodes()-1).X()); 
 		}
 		A(0,0) += fabs(mu); 
 

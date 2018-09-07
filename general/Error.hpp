@@ -34,6 +34,12 @@ void backtrace(int mode=0, int depth=-1);
 	std::cout << "*** WARNING: " << msg << std::endl; \
 }
 
+#define WARNIF(chk, msg) {\
+	if ((bool)(chk)) {\
+		WARNING(msg); \
+	}\
+}
+
 #ifndef NDEBUG 
 #define CHECK(chk, msg) {\
 	if (!(bool)(chk)) {\

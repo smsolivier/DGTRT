@@ -5,8 +5,8 @@
 namespace trt 
 { 
 
-TVector::TVector(const FESpace* space, int Nangles)
-	: Array<double>(space->GetVSize()*Nangles) {
+TVector::TVector(FESpace* space, int Nangles)
+	: Vector(space->GetVSize()*Nangles) {
 	_space = space; 
 	_Nangles = Nangles; 
 }
@@ -24,6 +24,12 @@ void TVector::GetAngle(int angle, Vector& psi_n) const {
 	for (int i=0; i<_space->GetVSize(); i++) {
 		psi_n[i] = (*this)(angle, i); 
 	} 
+}
+
+void TVector::SetAngle(int angle, const Vector& psi_n) {
+	for (int i=0; i<_space->GetVSize(); i++) {
+		(*this)(angle, i) = psi_n[i]; 
+	}
 }
 
 } // end namespace trt 

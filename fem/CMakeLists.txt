@@ -6,6 +6,7 @@ list(APPEND SRCS
   L2Segment.cpp
   FESpace.cpp
   BilinearIntegrator.cpp
+  LinearIntegrator.cpp
   )
 
 list(APPEND HDRS
@@ -16,6 +17,7 @@ list(APPEND HDRS
   L2Segment.hpp
   FESpace.hpp
   BilinearIntegrator.hpp
+  LinearIntegrator.hpp
   Coefficient.hpp
   )
 

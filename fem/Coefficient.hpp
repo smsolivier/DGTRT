@@ -15,9 +15,14 @@ public:
 		ERROR("abstract class is not callable. use a pointer to a derived class"); 
 	}
 	/// interface for evaluating with a transformation
-	virtual double Eval(ElTrans& trans, double xref) const {
+	double Eval(ElTrans& trans, double xref) const {
 		return Eval(trans.Transform(xref)); 
 	}
+	/// set the state 
+	void SetState(double state) {_state = state; }
+protected:
+	/// store a constant parameter that can be used in evaluating 2D functions 
+	double _state; 
 }; 
 
 /// evaluates to a constant value 
@@ -27,7 +32,6 @@ public:
 	ConstantCoefficient(double c) {_c = c; }
 	/// evaluate 
 	double Eval(double xphys) const {return _c; }
-
 private:
 	/// constant value 
 	double _c; 
@@ -43,6 +47,18 @@ public:
 private:
 	/// store the function 
 	double (*_f)(double); 
+}; 
+
+/// evaluate a 2D function through setting the state 
+class FunctionStateCoefficient : public Coefficient {
+public:
+	/// constructor 
+	FunctionStateCoefficient(double (*f)(double, double)) {_f = f; }
+	/// evaluate 
+	double Eval(double xphys) const {return _f(xphys, _state); }
+private:
+	/// store the 2D function 
+	double (*_f)(double, double); 
 }; 
 
 /// convert an Opacity to a Coefficient (remove temperature dependence) 

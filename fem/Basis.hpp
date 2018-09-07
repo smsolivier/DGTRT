@@ -10,9 +10,11 @@ namespace trt
 /// represent a polynomial of one variable 
 class Poly1D {
 public:
+	/// default constructor 
+	Poly1D() { } 
 	/// constructor 
 	/** provide coefficients in ascending powers */ 
-	Poly1D(Array<double> c) {_c = c; }
+	Poly1D(const Array<double>& c) {_c = c; }
 	/// evaluate at a point 
 	double Eval(double x) const {
 		double sum = _c[0]; 
