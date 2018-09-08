@@ -20,4 +20,10 @@ double GridFunction::L2Error(Coefficient* exact) {
 	return sqrt(E); 
 }
 
+void GridFunction::Project(double (*f)(double)) {
+	for (int n=0; n<_space->GetNumNodes(); n++) {
+		(*this)[n] = f(_space->GetNode(n).X()); 
+	}
+}
+
 } // end namespace trt 

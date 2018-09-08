@@ -7,6 +7,7 @@ list(APPEND TESTS
 	coefficient.cpp
 	array.cpp
 	si.cpp
+	opacity.cpp
 	)
 
 if (CMAKE_TESTING_ENABLED)

@@ -21,6 +21,7 @@
 #include "Lua.hpp"
 #include "GridFunction.hpp"
 #include "Writer.hpp"
+#include "Opacity.hpp"
 
 // start the wall timer 
 static trt::WallTimer& wt = trt::WallTimer::instance(); 

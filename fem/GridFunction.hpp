@@ -20,6 +20,8 @@ public:
 	FESpace* GetSpace() const {return _space; }
 	/// return the L2 error 
 	double L2Error(Coefficient* exact); 
+	/// evaluate a function and store in this 
+	void Project(double (*f)(double)); 
 private:
 	/// space associated with the solution vector 
 	FESpace* _space; 

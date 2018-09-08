@@ -18,8 +18,8 @@ double Inflow(double x, double mu) {
 double Exact(double x) {return sin(M_PI*x); }
 
 double Error(int Ne, int p) {
-	ConstantCoefficient Sig_t(1.); 
-	ConstantCoefficient Sig_s(.1); 
+	ConstantOpacity Sig_t(1.); 
+	ConstantOpacity Sig_s(.1); 
 	FunctionStateCoefficient q(QMMS); 
 	FunctionStateCoefficient inflow(Inflow); 
 	int Nangles = 4; 

@@ -5,6 +5,7 @@
 #include "TVector.hpp"
 #include "Quadrature.hpp"
 #include "Sweeper.hpp"
+#include "Opacity.hpp"
 
 namespace trt 
 {
@@ -20,7 +21,7 @@ public:
 		\param q source 
 	*/ 
 	TransportOperator(FESpace* space, int Nangles, 
-		Coefficient* sig_s, Coefficient* sig_t, Coefficient* q, Coefficient* inflow); 
+		Opacity* sig_s, Opacity* sig_t, Coefficient* q, Coefficient* inflow); 
 	/// perform source iteration 
 	/** \param[in,out] initial guess for psi. final solution returned in psi 
 		\param[in] niter maximum number of iterations 
@@ -35,9 +36,9 @@ private:
 	/// number of angles 
 	int _Nangles; 
 	/// abs cross section 
-	Coefficient* _sig_a; 
+	Opacity* _sig_a; 
 	/// scattering cross section  
-	Coefficient* _sig_s; 
+	Opacity* _sig_s; 
 	/// total cross section 
 	Coefficient* _sig_t;
 	/// source 

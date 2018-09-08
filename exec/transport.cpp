@@ -26,8 +26,8 @@ int main(int argc, char* argv[]) {
 	int p = lua.FEOrder();  
 	double xb = lua.Double("xb"); 
 
-	FunctionCoefficient sig_t(Sigma_t); 
-	FunctionCoefficient sig_s(Sigma_s); 
+	FunctionOpacity sig_t(Sigma_t); 
+	FunctionOpacity sig_s(Sigma_s); 
 	FunctionStateCoefficient source(Source); 
 	FunctionStateCoefficient inflow(Inflow); 
 

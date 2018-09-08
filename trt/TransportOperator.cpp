@@ -6,7 +6,7 @@ namespace trt
 {
 
 TransportOperator::TransportOperator(FESpace* space, int Nangles, 
-	Coefficient* sig_s, Coefficient* sig_t, Coefficient* q, Coefficient* inflow) 
+	Opacity* sig_s, Opacity* sig_t, Coefficient* q, Coefficient* inflow) 
 	: _quad(Nangles, -1, 1), _sweeper(space, _quad, inflow) {
 	_space = space; 
 	_Nangles = Nangles; 

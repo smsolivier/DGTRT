@@ -17,6 +17,8 @@ public:
 	int GetVSize() const {return _nodes.Size(); }
 	/// return the number of elements 
 	int GetNumElements() const {return _els.Size(); }
+	/// return the number of nodes 
+	int GetNumNodes() const {return _nodes.Size(); }
 	/// access to element e
 	Element& GetElement(int e) {return *_els[e]; }
 	/// access to node i 
