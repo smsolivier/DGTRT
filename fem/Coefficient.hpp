@@ -41,7 +41,11 @@ public:
 	/// constructor 
 	FunctionCoefficient(double (*f)(double x)) {_f = f; }
 	/// evaluate 
-	double Eval(ElTrans& trans, double xref) const {return _f(trans.Transform(xref)); }
+	double Eval(ElTrans& trans, double xref) const {
+		double val = _f(trans.Transform(xref)); 
+		CHECKFINITE(val); 
+		return val; 
+	}
 private:
 	/// store the function 
 	double (*_f)(double); 
@@ -54,7 +58,9 @@ public:
 	FunctionStateCoefficient(double (*f)(double, double)) {_f = f; }
 	/// evaluate 
 	double Eval(ElTrans& trans, double xref) const {
-		return _f(trans.Transform(xref), _state); 
+		double val = _f(trans.Transform(xref), _state); 
+		CHECKFINITE(val); 
+		return val; 
 	}
 private:
 	/// store the 2D function 
@@ -71,6 +77,44 @@ public:
 private:
 	/// store the grid function
 	GridFunction* _gf; 
+}; 
+
+/// subtract a coefficient from another one 
+class SubtractCoefficient : public Coefficient {
+public:
+	/// constructor. evaluates c1 - c2 
+	SubtractCoefficient(Coefficient* c1, Coefficient* c2) {
+		_c1 = c1; 
+		_c2 = c2; 
+	}
+	/// evaluate the two coefficients and subtract 
+	double Eval(ElTrans& trans, double xref) const {
+		double val = _c1->Eval(trans, xref) - _c2->Eval(trans, xref);
+		CHECKFINITE(val); 
+		return val; 
+	}
+private:
+	Coefficient* _c1; 
+	Coefficient* _c2; 
+}; 
+
+/// add two coefficients together 
+class AddCoefficient : public Coefficient {
+public:
+	/// constructor. adds c1 and c2 
+	AddCoefficient(Coefficient* c1, Coefficient* c2) {
+		_c1 = c1; 
+		_c2 = c2; 
+	}
+	/// evaluate 
+	double Eval(ElTrans& trans, double xref) const {
+		double val = _c1->Eval(trans, xref) + _c2->Eval(trans, xref);
+		CHECKFINITE(val); 
+		return val; 
+	}
+private:
+	Coefficient* _c1; 
+	Coefficient* _c2; 
 }; 
 
 } // end namespace trt 

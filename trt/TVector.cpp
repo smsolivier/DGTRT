@@ -12,10 +12,18 @@ TVector::TVector(FESpace* space, int Nangles)
 }
 
 double& TVector::operator()(int angle, int i) {
+	CHECK(angle < _Nangles, "angle index out of range. angle = " << angle
+		<< ", total = " << _Nangles);
+		CHECK(i < _space->GetVSize(), "space index out of range, i = " 
+			<< i << ", size = " << _space->GetVSize());   
 	return (*this)[FLAT(angle, i)]; 
 }
 
 double TVector::operator()(int angle, int i) const {
+	CHECK(angle < _Nangles, "angle index out of range. angle = " << angle
+		<< ", total = " << _Nangles); 
+	CHECK(i < _space->GetVSize(), "space index out of range,  i = " 
+		<< i << ", size = " << _space->GetVSize()); 
 	return (*this)[FLAT(angle, i)]; 
 }
 

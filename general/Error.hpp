@@ -52,6 +52,18 @@ void backtrace(int mode=0, int depth=-1);
 #define CHECK(chk, msg) 
 #endif
 
+#ifndef NDEBUG 
+#define CHECKFINITE(var) {\
+	if (std::isnan(var) || std::isinf(var)) {\
+		std::cout << "CHECK FAILED: variable is inf or nan" << \
+		PRINTMSG(#var << " = " << var) << SRCMSG << std::endl; \
+		EXIT; \
+	}\
+}
+#else 
+#define CHECKFINITE(var) 
+#endif
+
 #define TEST(chk, msg) {\
 	std::cout << msg << ": "; \
 	if ((bool)(chk)) {\

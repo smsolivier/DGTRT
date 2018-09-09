@@ -16,8 +16,8 @@ L2Space::L2Space(int Ne, double xb, int order) : FESpace(Ne, xb, order) {
 		if (i==0) {lbc = DIRICHLET; rbc = INTERIOR; }
 		else if (i==Ne-1) {rbc = DIRICHLET; lbc = INTERIOR; }
 		else {lbc = rbc = INTERIOR; }
-		Node left(i*h, -1, lbc); 
-		Node right((i+1)*h, -1, rbc); 
+		Node left(i*h, 0, -1, lbc); 
+		Node right((i+1)*h, 1, -1, rbc); 
 		_els.Append(new L2Segment(left, right, order)); 
 	}
 

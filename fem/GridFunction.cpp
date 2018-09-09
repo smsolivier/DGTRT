@@ -26,4 +26,15 @@ void GridFunction::Project(double (*f)(double)) {
 	}
 }
 
+void GridFunction::Project(Coefficient* c) {
+	for (int e=0; e<_space->GetNumElements(); e++) {
+		Element& el = _space->GetElement(e); 
+		ElTrans& trans = el.GetTrans(); 
+		for (int i=0; i<el.NumNodes(); i++) {
+			Node& node = el.GetNode(i); 
+			(*this)[node.GlobalID()] = c->Eval(trans, node.XRef()); 
+		}
+	}
+}
+
 } // end namespace trt 

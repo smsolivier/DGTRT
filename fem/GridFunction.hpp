@@ -22,6 +22,10 @@ public:
 	double L2Error(Coefficient* exact); 
 	/// evaluate a function and store in this 
 	void Project(double (*f)(double)); 
+	/// evaluate at a coefficient at every node 
+	void Project(Coefficient* c); 
+	/// assign all elements to a value 
+	void operator=(double val) {Vector::operator=(val); }
 private:
 	/// space associated with the solution vector 
 	FESpace* _space; 

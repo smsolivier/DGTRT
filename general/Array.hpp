@@ -23,6 +23,13 @@ public:
 		\param val initial value 
 	*/ 
 	Array(int N, T val) {_vector.resize(N, val); } 
+	/// copy assignment 
+	void operator=(const Array<T>& a) {
+		Resize(a.Size()); 
+		for (int i=0; i<a.Size(); i++) {
+			(*this)[i] = a[i]; 
+		}
+	}
 	/// construct from initializer list 
 	Array(std::initializer_list<T> list) {
 		for (auto i=list.begin(); i != list.end(); i++) {
@@ -56,13 +63,6 @@ public:
 	void operator=(T val) {
 		for (int i=0; i<Size(); i++) {
 			(*this)[i] = val; 
-		}
-	}
-	/// copy assignment 
-	void operator=(const Array<T>& a) {
-		Resize(a.Size()); 
-		for (int i=0; i<a.Size(); i++) {
-			(*this)[i] = a[i]; 
 		}
 	}
 	/// add to end of Array 

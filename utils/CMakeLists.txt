@@ -3,6 +3,7 @@ list (APPEND SRCS
 	 CH_Timer.cpp
 	 Lua.cpp
 	 Writer.cpp
+	 Timer.cpp
 	 )
 
 list (APPEND HDRS
@@ -11,6 +12,7 @@ list (APPEND HDRS
 	 ClockTicks.hpp
 	 Lua.hpp
 	 Writer.hpp
+	 Timer.hpp
 	 )
 
 convert_filenames_to_full_paths(SRCS) 

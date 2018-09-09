@@ -1,5 +1,7 @@
 #include "Vector.hpp"
 
+using namespace std; 
+
 namespace trt 
 {
 
@@ -73,6 +75,14 @@ void Vector::Subtract(const Vector& v, Vector& diff) const {
 	for (int i=0; i<Size(); i++) {
 		diff[i] = (*this)[i] - v[i]; 
 	}
+}
+
+bool Vector::IsFinite() const {
+	for (int i=0; i<Size(); i++) {
+		if (isnan((*this)[i])) return false; 
+		if (isinf((*this)[i])) return false; 
+	}
+	return true; 
 }
 
 } // end namespace trt 

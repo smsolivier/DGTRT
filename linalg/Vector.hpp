@@ -19,6 +19,8 @@ public:
 	Vector(int N, double val=0); 
 	/// default constructor 
 	Vector() { }
+	/// copy assignment 
+	void operator=(const Vector& v) {Array::operator=(v); }
 	/// set all elements to a value 
 	void operator=(double val); 
 	/// divide all entries by val 
@@ -35,6 +37,8 @@ public:
 	void operator+=(const Vector& v); 
 	/// subtract from this 
 	void Subtract(const Vector& v, Vector& diff) const; 
+	/// check if all entries in vector are finite 
+	bool IsFinite() const; 
 }; 
 
 } // end namespace trt 

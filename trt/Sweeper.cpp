@@ -6,37 +6,45 @@ namespace trt
 {
 
 void Sweeper::Solve(Coefficient* sig_s, Coefficient* sig_t, Coefficient* q, 
-	const Vector& phi, TVector& psi) const {
+	TVector* dq, const Vector& phi, TVector& psi) const {
 
+	Vector* q_n = NULL; 
 	for (int n=0; n<_quad.NumPoints(); n++) {
 		double mu = _quad.Point(n); 
 		Vector psi_n; 
 		psi.GetAngle(n, psi_n); 
-		if (mu > 0) SweepLR(mu, sig_s, sig_t, q, phi, psi_n); 
-		else SweepRL(mu, sig_s, sig_t, q, phi, psi_n); 
+		if (dq) {
+			q_n = new Vector(_space->GetVSize()); 
+			dq->GetAngle(n, *q_n); 
+		}
+		if (mu > 0) SweepLR(mu, sig_s, sig_t, q, q_n, phi, psi_n); 
+		else SweepRL(mu, sig_s, sig_t, q, q_n, phi, psi_n); 
 		psi.SetAngle(n, psi_n); 
+		if (dq) delete q_n; 
 	}
 }
 
 void Sweeper::SweepLR(double mu, Coefficient* sig_s, Coefficient* sig_t, 
-	Coefficient* q, const Vector& phi, Vector& psi_n) const {
+	Coefficient* q, Vector* dq, const Vector& phi, Vector& psi_n) const {
 
 	CHECK(mu > 0, "mu must be positive for left to right sweeps");
 
 	ConstantCoefficient c_mu(mu); 
 	MassIntegrator col_int(sig_t); 
 	MassIntegrator scat_int(sig_s); 
+	MassIntegrator dq_int; 
 	WeakConvectionIntegrator stream_int(&c_mu); 
 	q->SetState(mu); 
 	DomainIntegrator di(q); 
 	_inflow->SetState(mu); 
 	for (int e=0; e<_space->GetNumElements(); e++) {
-		Matrix stream, coll, scatt; 
+		Matrix stream, coll, scatt, mass; 
 		Element& el = _space->GetElement(e); 
 		Vector rhs(el.NumNodes()); 
 		stream_int.Assemble(el, stream); 
 		col_int.Assemble(el, coll); 
 		scat_int.Assemble(el, scatt); 
+		dq_int.Assemble(el, mass); 
 
 		// add into one matrix 
 		Matrix A(el.NumNodes()); 
@@ -54,6 +62,13 @@ void Sweeper::SweepLR(double mu, Coefficient* sig_s, Coefficient* sig_t,
 		Vector source; 
 		di.Assemble(el, source); 
 		rhs += source; 
+
+		// add in discrete source 
+		if (dq) {
+			Vector q_local; 
+			dq->GetSubVector(vdofs, q_local); 
+			mass.Mult(q_local, rhs); 
+		}
 
 		// apply upwinding 
 		if (e > 0) {
@@ -76,25 +91,27 @@ void Sweeper::SweepLR(double mu, Coefficient* sig_s, Coefficient* sig_t,
 }
 
 void Sweeper::SweepRL(double mu, Coefficient* sig_s, Coefficient* sig_t, 
-	Coefficient* q, const Vector& phi, Vector& psi_n) const {
+	Coefficient* q, Vector* dq, const Vector& phi, Vector& psi_n) const {
 
 	CHECK(mu < 0, "mu must be negative for right to left sweep"); 
 
 	ConstantCoefficient c_mu(mu); 
 	MassIntegrator col_int(sig_t); 
 	MassIntegrator scat_int(sig_s); 
+	MassIntegrator dq_int; 
 	WeakConvectionIntegrator stream_int(&c_mu); 
 	q->SetState(mu); 
 	DomainIntegrator di(q); 
 	_inflow->SetState(mu); 
 	for (int e=_space->GetNumElements()-1; e>=0; e--) {
 		Element& el = _space->GetElement(e); 
-		Matrix stream, coll, scatt; 
+		Matrix stream, coll, scatt, mass; 
 		Vector rhs(el.NumNodes()); 
 
 		stream_int.Assemble(el, stream); 
 		col_int.Assemble(el, coll); 
 		scat_int.Assemble(el, scatt); 
+		dq_int.Assemble(el, mass); 
 
 		// add into one matrix 
 		Matrix A(el.NumNodes()); 
@@ -112,6 +129,13 @@ void Sweeper::SweepRL(double mu, Coefficient* sig_s, Coefficient* sig_t,
 		Vector source; 
 		di.Assemble(el, source); 
 		rhs += source; 
+
+		// add in discrete source 
+		if (dq) {
+			Vector q_local; 
+			dq->GetSubVector(vdofs, q_local); 
+			mass.Mult(q_local, rhs); 
+		}
 
 		// apply upwinding 
 		if (e < _space->GetNumElements()-1) {

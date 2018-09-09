@@ -4,8 +4,8 @@ using namespace trt;
 using namespace std; 
 
 int main() {
-	Node left(0, -1, INTERIOR); 
-	Node right(2, -1, INTERIOR); 
+	Node left(0, 0, -1, INTERIOR); 
+	Node right(2, 1, -1, INTERIOR); 
 	L2Segment l2(left, right, 1); 
 
 	MassIntegrator mi; 
