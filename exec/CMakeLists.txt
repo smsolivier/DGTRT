@@ -1,6 +1,7 @@
 list(APPEND EXEC
 	transport.cpp
 	marshak.cpp
+	td.cpp
 )
 
 # add_executable(poisson poisson.cpp)

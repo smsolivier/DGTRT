@@ -37,6 +37,7 @@ int main(int argc, char* argv[]) {
 
 	L2Space l2(Ne, xb, p); 
 	TransportOperator transport(&l2, Nangles, &sig_s, &sig_t, &source, &inflow); 
+	transport.SetA(lua.Double("a", 1)); 
 
 	TVector psi(&l2, Nangles); 
 	TVector psi_p(&l2, Nangles); 
@@ -46,6 +47,7 @@ int main(int argc, char* argv[]) {
 	T = lua.Double("Tinit"); 
 	writer.Add(phi, "phi");
 	writer.Add(T, "T");  
+	writer.SetFreq(lua.Int("freq", 1)); 
 
 	for (int t=0; t<Nt; t++) {
 		psi_p = psi; 

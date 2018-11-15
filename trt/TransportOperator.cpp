@@ -101,6 +101,15 @@ void TransportOperator::NewtonIteration(const TVector& psi_p,
 	}
 }
 
+void TransportOperator::BackwardEuler(const TVector& psi_p, int niter, double tol, double dt, TVector& psi) {
+	ConstantCoefficient cdt(1./(_c*dt)); 
+	AddCoefficient sig_t_tilde(_sig_t, &cdt); 
+	TVector dq(_space, _Nangles); 
+	dq = psi_p; 
+	dq *= 1./(_c*dt); 
+	int inner = SourceIteration(&sig_t_tilde, _sig_s, _q, &dq, niter, tol, psi, true); 
+}
+
 void TransportOperator::ComputeScalarFlux(const TVector& psi, Vector& phi) const {
 	phi = 0.; 
 	Vector psi_n; 

@@ -26,7 +26,7 @@ public:
 	void SourceIteration(TVector& psi, int niter, double tol) const {
 		SourceIteration(_sig_t, _sig_s, _q, NULL, niter, tol, psi); 
 	}
-	/// perform source iteration 
+	/// perform source iteration with a discrete source 
 	/** \param[in] sig_t total interaction (term that multiplies psi on LHS) 
 		\param[in] sig_s scattering (phi term that is lagged) 
 		\param[in] q fixed source on rhs 
@@ -53,8 +53,18 @@ public:
 	void NewtonIteration(const TVector& psi_p, const Vector& T_p, 
 		int n_outer, double t_outer, int n_inner, double t_inner, double dt,
 		TVector& psi, Vector& T); 
+	/// perform one time step 
+	/** \param[in] psi_p angular flux from previous time step 
+		\param[in] niter maximum number of source iterations to try 
+		\param[in] tol iterative tolerance to stop at 
+		\param[in] dt time step size 
+		\param[out] psi angular flux at next time step 
+	*/ 
+	void BackwardEuler(const TVector& psi_p, int niter, double tol, double dt, TVector& psi); 
 	/// compute the scalar flux 
 	void ComputeScalarFlux(const TVector& psi, Vector& phi) const; 
+	/// set the radiation temperature thing (a) 
+	void SetA(double a) {_a = a; }
 private:
 	/// form the source term for backward euler Newton Iteration 
 	void FormSource(double dt, const TVector& psi_p, const Vector& T_p, 
