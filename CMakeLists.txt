@@ -33,7 +33,7 @@ if (LAPACK_FOUND)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -llapack")  
 endif()
 
-option(USE_EIGEN "compile with eigen" ON) 
+option(USE_EIGEN "compile with eigen" OFF) 
 
 find_package(Libunwind) 
 if (LIBUNWIND_FOUND) 
