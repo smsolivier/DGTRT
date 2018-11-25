@@ -8,7 +8,6 @@ double F(double x) {return x*x*x; }
 void integrate(Quadrature& q) {
 	double sum = 0.; 
 	for (int i=0; i<q.NumPoints(); i++) {
-		cout << q.Point(i) << endl; 
 		sum += F(q.Point(i)) * q.Weight(i); 
 	}
 	TEST(EQUAL(sum, 1./4*pow(2,4)), "order = " << q.Order());	
