@@ -1,5 +1,6 @@
 #include "TransportOperator.hpp"
 #include "Timer.hpp"
+#include "CH_Timer.hpp"  
 
 using namespace std; 
 
@@ -7,7 +8,7 @@ namespace trt
 {
 
 TransportOperator::TransportOperator(FESpace* space, int Nangles, 
-	Opacity* sig_s, Opacity* sig_t, Coefficient* q, Coefficient* inflow) 
+	Opacity* sig_s, Opacity* sig_t, Coefficient* q, Coefficient* inflow, Opacity* cv) 
 	: _quad(Nangles, -1, 1), _sweeper(space, _quad, inflow) {
 	_space = space; 
 	_Nangles = Nangles; 
@@ -16,8 +17,8 @@ TransportOperator::TransportOperator(FESpace* space, int Nangles,
 	_sig_a = new SubtractCoefficient(_sig_t, _sig_s); 
 	_q = q; 
 	_inflow = inflow; 
+	_cv = cv; 
 
-	_cv = 1; 
 	_a = 1; 
 	_c = 1; 
 }
@@ -25,6 +26,8 @@ TransportOperator::TransportOperator(FESpace* space, int Nangles,
 int TransportOperator::SourceIteration(Coefficient* sig_t, 
 	Coefficient* sig_s, Coefficient* q, TVector* dq, int niter, 
 	double tol, TVector& psi, bool LOUD) const {
+	CH_TIMERS("source iteration"); 
+	
 	int n; 
 	double res = 0; 
 	Vector phi(_space->GetVSize()); 
@@ -56,6 +59,7 @@ int TransportOperator::SourceIteration(Coefficient* sig_t,
 void TransportOperator::NewtonIteration(const TVector& psi_p, 
 	const Vector& T_p, int n_outer, double t_outer, int n_inner, 
 	double t_inner, double dt, TVector& psi, Vector& T) {
+	CH_TIMERS("newton iteration"); 
 
 	T = T_p;
 	Vector T_old(_space->GetVSize());  
@@ -73,6 +77,7 @@ void TransportOperator::NewtonIteration(const TVector& psi_p,
 	for (n=0; n<n_outer; n++) {
 		_sig_t->SetTemperature(T); 
 		_sig_s->SetTemperature(T);
+		_cv->SetTemperature(T); 
 
 		FormSource(dt, psi_p, T_p, T, dq); 
 		FormScattering(dt, T, scattering_gf); 
@@ -111,6 +116,7 @@ void TransportOperator::BackwardEuler(const TVector& psi_p, int niter, double to
 }
 
 void TransportOperator::ComputeScalarFlux(const TVector& psi, Vector& phi) const {
+	CH_TIMERS("compute scalar flux"); 
 	phi = 0.; 
 	Vector psi_n; 
 	phi.Resize(_space->GetVSize()); 
@@ -123,16 +129,20 @@ void TransportOperator::ComputeScalarFlux(const TVector& psi, Vector& phi) const
 
 void TransportOperator::FormSource(double dt, const TVector& psi_p, 
 	const Vector& T_p, const Vector& Ts, TVector& dq) const {
+	CH_TIMERS("form source"); 
+
 	GridFunction sigma_a(_space); 
-	sigma_a.Project(_sig_a);  
+	GridFunction cv(_space); 
+	sigma_a.Project(_sig_a); 
+	cv.Project(_cv);  
 	for (int n=0; n<_Nangles; n++) {
 		for (int i=0; i<_space->GetVSize(); i++) {
 			double plank = _a*_c*pow(Ts[i], 4)/2; 
 			double dplank = 2*_a*_c*pow(Ts[i], 3); 
-			double alpha = 1 + 2*dt/_cv*sigma_a[i]*dplank; 
+			double alpha = 1 + 2*dt/cv[i]*sigma_a[i]*dplank; 
 			dq(n, i) = 1./(dt*_c)*psi_p(n, i) + sigma_a[i]*(
 				plank + dplank/alpha*(T_p[i] - Ts[i] - 
-					2* dt/_cv*sigma_a[i]*plank)); 
+					2* dt/cv[i]*sigma_a[i]*plank)); 
 		}
 	}
 	CHECK(dq.IsFinite(), "issue with source vector");
@@ -140,14 +150,18 @@ void TransportOperator::FormSource(double dt, const TVector& psi_p,
 
 void TransportOperator::FormScattering(double dt, const Vector& Ts,
 	Vector& scattering) const {
+	CH_TIMERS("form scattering"); 
+
 	GridFunction sigma_a(_space);  
 	GridFunction sigma_s(_space); 
+	GridFunction cv(_space); 
 	sigma_a.Project(_sig_a); 
-	sigma_s.Project(_sig_s);  
+	sigma_s.Project(_sig_s); 
+	cv.Project(_cv);  
 	for (int i=0; i<_space->GetVSize(); i++) {
 		double dplank = 2*_a*_c*pow(Ts[i], 3); 
 		double nu = 2*sigma_a[i] * dplank * dt; 
-		nu /= _cv + 2*dt*sigma_a[i]*dplank; 
+		nu /= cv[i] + 2*dt*sigma_a[i]*dplank; 
 		scattering[i] = sigma_s[i] + nu*sigma_a[i]; 
 	}
 	CHECK(scattering.IsFinite(), "issue with scattering vector"); 
@@ -155,13 +169,17 @@ void TransportOperator::FormScattering(double dt, const Vector& Ts,
 
 void TransportOperator::UpdateTemperature(double dt, const Vector& T_old, 
 	const Vector& T_p, const Vector& phi, Vector& T) const {
+	CH_TIMERS("update temperature"); 
+
 	GridFunction sigma_a(_space); 
-	sigma_a.Project(_sig_a);  
+	GridFunction cv(_space); 
+	sigma_a.Project(_sig_a); 
+	cv.Project(_cv);  
 	for (int i=0; i<_space->GetVSize(); i++) {
 		double plank = _a*_c*pow(T_old[i], 4)/2; 
 		double dplank = 2*_a*_c*pow(T_old[i], 3); 
-		double alpha = 1 + 2*dt/_cv*sigma_a[i]*dplank; 
-		T[i] = T_old[i] + (T_p[i] - T_old[i] + dt/_cv*sigma_a[i]*(phi[i] - 2*plank))/alpha; 
+		double alpha = 1 + 2*dt/cv[i]*sigma_a[i]*dplank; 
+		T[i] = T_old[i] + (T_p[i] - T_old[i] + dt/cv[i]*sigma_a[i]*(phi[i] - 2*plank))/alpha; 
 	}
 	CHECK(T.IsFinite(), "issue with temperature vector"); 
 }

@@ -1,4 +1,5 @@
 #include "Vector.hpp"
+#include "CH_Timer.hpp"
 
 using namespace std; 
 
@@ -29,6 +30,7 @@ void Vector::operator*=(double val) {
 }
 
 double Vector::operator*(const Vector& v) const {
+	CH_TIMERS("dot product"); 
 	CHECK(v.Size()==Size(), "size mismatch. v = " << v.Size()
 		<< ", this = " << Size());
 	double sum = 0; 
@@ -39,6 +41,7 @@ double Vector::operator*(const Vector& v) const {
 }
 
 void Vector::OuterProduct(const Vector& v, Matrix& mat) const {
+	CH_TIMERS("outer product"); 
 	CHECK(v.Size()>0, "size incorrect. size = " << v.Size()); 
 	CHECK(Size()>0, "size incorrect. size = " << Size()); 
 	mat.Resize(Size(), v.Size()); 

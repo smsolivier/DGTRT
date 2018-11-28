@@ -1,12 +1,15 @@
 #include "Sweeper.hpp"
 #include "BilinearIntegrator.hpp"
 #include "LinearIntegrator.hpp"
+#include "CH_Timer.hpp" 
 
 namespace trt 
 {
 
 void Sweeper::Solve(Coefficient* sig_s, Coefficient* sig_t, Coefficient* q, 
 	TVector* dq, const Vector& phi, TVector& psi) const {
+
+	CH_TIMERS("sweep"); 
 
 	Vector* q_n = NULL; 
 	for (int n=0; n<_quad.NumPoints(); n++) {
@@ -26,6 +29,7 @@ void Sweeper::Solve(Coefficient* sig_s, Coefficient* sig_t, Coefficient* q,
 
 void Sweeper::SweepLR(double mu, Coefficient* sig_s, Coefficient* sig_t, 
 	Coefficient* q, Vector* dq, const Vector& phi, Vector& psi_n) const {
+	CH_TIMERS("sweep left to right"); 
 
 	CHECK(mu > 0, "mu must be positive for left to right sweeps");
 
@@ -44,7 +48,7 @@ void Sweeper::SweepLR(double mu, Coefficient* sig_s, Coefficient* sig_t,
 		stream_int.Assemble(el, stream); 
 		col_int.Assemble(el, coll); 
 		scat_int.Assemble(el, scatt); 
-		dq_int.Assemble(el, mass); 
+		if (dq) dq_int.Assemble(el, mass); 
 
 		// add into one matrix 
 		Matrix A(el.NumNodes()); 
@@ -92,6 +96,7 @@ void Sweeper::SweepLR(double mu, Coefficient* sig_s, Coefficient* sig_t,
 
 void Sweeper::SweepRL(double mu, Coefficient* sig_s, Coefficient* sig_t, 
 	Coefficient* q, Vector* dq, const Vector& phi, Vector& psi_n) const {
+	CH_TIMERS("sweep right to left"); 
 
 	CHECK(mu < 0, "mu must be negative for right to left sweep"); 
 
@@ -111,7 +116,7 @@ void Sweeper::SweepRL(double mu, Coefficient* sig_s, Coefficient* sig_t,
 		stream_int.Assemble(el, stream); 
 		col_int.Assemble(el, coll); 
 		scat_int.Assemble(el, scatt); 
-		dq_int.Assemble(el, mass); 
+		if (dq) dq_int.Assemble(el, mass); 
 
 		// add into one matrix 
 		Matrix A(el.NumNodes()); 

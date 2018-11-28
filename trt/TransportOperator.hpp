@@ -19,9 +19,11 @@ public:
 		\param sig_s scattering cross section 
 		\param sig_t total cross section 
 		\param q source 
+		\param cv heat capacity 
 	*/ 
 	TransportOperator(FESpace* space, int Nangles, 
-		Opacity* sig_s, Opacity* sig_t, Coefficient* q, Coefficient* inflow); 
+		Opacity* sig_s, Opacity* sig_t, Coefficient* q, 
+		Coefficient* inflow, Opacity* cv=NULL); 
 	/// source iteration but with opacities from constructor 
 	void SourceIteration(TVector& psi, int niter, double tol) const {
 		SourceIteration(_sig_t, _sig_s, _q, NULL, niter, tol, psi); 
@@ -91,7 +93,8 @@ private:
 	/// inflow function 
 	Coefficient* _inflow; 
 	/// heat capacity 
-	double _cv; 
+	// double _cv; 
+	Opacity* _cv; 
 	/// speed of light 
 	double _c; 
 	/// radiation temperature thing 

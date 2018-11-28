@@ -1,7 +1,7 @@
-Ne = 10
+Ne = 100
 Nangles = 32
 fe_order = 5
-xb = 8 
+xb = 8
 
 niter = 100
 
@@ -10,7 +10,7 @@ function Sigma_t(x)
 end 
 
 function Sigma_s(x)
-	return 0.8 
+	return 0.8
 end 
 
 function Source(x, mu) 

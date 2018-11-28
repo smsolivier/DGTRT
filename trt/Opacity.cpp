@@ -9,6 +9,7 @@ double FunctionOpacity::Eval(ElTrans& trans, double xref) const {
 		// interpolate temperature 
 		Element& el = trans.GetElement(); 
 		double T = el.Interpolate(xref, _T); 
+		if (T <= 0) ERROR("negative temperature found. T = " << T); 
 		return _f(trans.Transform(xref), T); 		
 	} else {
 		return _g(trans.Transform(xref)); 

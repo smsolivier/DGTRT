@@ -17,6 +17,9 @@ double Source(double x, double mu) {
 double Inflow(double x, double mu) {
 	return lua.ScalarFunction("Inflow", x, mu); 
 }
+double Cv(double x, double T) {
+	return lua.ScalarFunction("cv", x, T); 
+}
 
 int main(int argc, char* argv[]) {
 	lua.Parse(argc, argv, "marshak.lua");
@@ -32,11 +35,12 @@ int main(int argc, char* argv[]) {
 
 	FunctionOpacity sig_t(Sigma_t); 
 	FunctionOpacity sig_s(Sigma_s); 
+	FunctionOpacity cv(Cv); 
 	FunctionStateCoefficient source(Source); 
 	FunctionStateCoefficient inflow(Inflow); 
 
 	L2Space l2(Ne, xb, p); 
-	TransportOperator transport(&l2, Nangles, &sig_s, &sig_t, &source, &inflow); 
+	TransportOperator transport(&l2, Nangles, &sig_s, &sig_t, &source, &inflow, &cv); 
 	transport.SetA(lua.Double("a", 1)); 
 
 	TVector psi(&l2, Nangles); 

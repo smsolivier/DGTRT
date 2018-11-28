@@ -1,4 +1,5 @@
 #include "Matrix.hpp"
+#include "CH_Timer.hpp"
 
 using namespace std; 
 
@@ -67,6 +68,8 @@ double Matrix::operator()(int i, int j) const {
 }
 
 void Matrix::Solve(const Vector& b, Vector& x) const {
+	CH_TIMERS("solve matrix with lapack"); 
+
 	for (int i=0; i<x.Size(); i++) {
 		x[i] = b[i]; 
 	}
@@ -89,6 +92,7 @@ void Matrix::operator*=(double val) {
 }
 
 void Matrix::operator+=(const Matrix& mat) {
+	CH_TIMERS("matrix += matrix"); 
 	CHECK(mat.Height()==Height(), "height mismatch. mat = " 
 		<< mat.Height() << ", this = " << Height()); 
 	CHECK(mat.Width()==Width(), "width mismatch. mat = " 
@@ -100,6 +104,8 @@ void Matrix::operator+=(const Matrix& mat) {
 }
 
 void Matrix::Add(const Matrix& a, Matrix& sum) const {
+	CH_TIMERS("add matrices"); 
+
 	CHECK((a.Height()==Height()) && (Height()==sum.Height()), "height mismatch. a = " 
 		<< a.Height() << ", this = " << Height() << ", sum = " << sum.Height()); 
 	CHECK((a.Width()==Width()) && (Width()==sum.Width()), "width mismatch"); 
@@ -110,6 +116,8 @@ void Matrix::Add(const Matrix& a, Matrix& sum) const {
 }
 
 void Matrix::Mult(double alpha, const Vector& x, double beta, Vector& b) const {
+	CH_TIMERS("matrix vector multiply"); 
+
 	CHECK(x.Size() == Width(), "size mismatch"); 
 	CHECK(b.Size() == Height(), "size mismatch"); 
 
@@ -124,7 +132,6 @@ void Matrix::Mult(double alpha, const Vector& x, double beta, Vector& b) const {
 	Vector xc(x); 
 
 	dgemv_(&trans, &M, &N, &alpha, copy.Data(), &LDA, &xc[0], &INCX, &beta, &b[0], &INCY); 
-
 }
 
 ostream& Matrix::Print(ostream& out) const {

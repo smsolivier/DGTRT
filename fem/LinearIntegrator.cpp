@@ -1,10 +1,13 @@
 #include "LinearIntegrator.hpp"
 #include "Quadrature.hpp"
+#include "CH_Timer.hpp"
 
 namespace trt 
 {
 
 void DomainIntegrator::Assemble(Element& el, Vector& elvec) {
+	CH_TIMERS("domain integrator"); 
+	
 	elvec.Resize(el.NumNodes()); 
 	Quadrature quad(INTEGRATION_ORDER); 
 

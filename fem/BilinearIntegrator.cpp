@@ -1,11 +1,14 @@
 #include "BilinearIntegrator.hpp"
 #include "Quadrature.hpp"
 #include "ElTrans.hpp"
+#include "CH_Timer.hpp"
 
 namespace trt 
 {
 
 void MassIntegrator::Assemble(Element& el, Matrix& elmat) {
+	CH_TIMERS("mass integrator"); 
+	
 	elmat.Resize(el.NumNodes()); 
 	Quadrature quad(INTEGRATION_ORDER); 
 
@@ -21,6 +24,8 @@ void MassIntegrator::Assemble(Element& el, Matrix& elmat) {
 }
 
 void WeakConvectionIntegrator::Assemble(Element& el, Matrix& elmat) {
+	CH_TIMERS("weak convection integrator"); 
+
 	elmat.Resize(el.NumNodes()); 
 	Quadrature quad(INTEGRATION_ORDER); 
 
